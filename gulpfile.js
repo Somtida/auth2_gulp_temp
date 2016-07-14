@@ -8,7 +8,7 @@ const plumber = require('gulp-plumber');
 const sourcemaps = require('gulp-sourcemaps');
 const sass = require('gulp-sass');
 const nodemon = require('gulp-nodemon');
-// const browser = require('gulp-browsersync');
+const browser = require('browser-sync');
 const ngAnnotate = require('gulp-ng-annotate');
 const del = require('del');
 
@@ -46,21 +46,26 @@ const paths = {
 
 gulp.task('default', [ 'build', 'watch', 'serve']);
 
-gulp.task('build', ['html', 'js', 'css']);
+gulp.task('build', ['favicon', 'html', 'js', 'css']);
 gulp.task('watch', ['watch.html', 'watch.js', 'watch.css']);
 
-gulp.task('serve', function(){
-  nodemon({
+gulp.task('serve', ['nodemon'], function(){
+  browser.init({
+    proxy: 'http://localhost:8000',
+    files: ['public/**/*.*']
+  })
+})
+// gulp.task('serve', function(){
+//   nodemon({
+//     ignore: ['./client', './public']
+//   });
+// })
+gulp.task('nodemon', function(){
+  return nodemon({
     ignore: ['./client', './public']
-  });
+  })
 })
 
-// gulp.task('serve', ['nodemon'], function(){
-//   browser: init({
-//     proxy: 'http://localhost:8000',
-//     files: ['public/**/*.*']
-//   })
-// })
 
 
 gulp.task('favicon', function(){
@@ -74,11 +79,6 @@ gulp.task('favicon', function(){
 //     './client/images/**/*.png',
 // })
 
-// gulp.task('nodemon', function(){
-//   return nodemon({
-//     ignore: ['./client', './public']
-//   })
-// })
 
 //////////////// HTML //////////////////////
 gulp.task('html', ['clean:html'],function(){
